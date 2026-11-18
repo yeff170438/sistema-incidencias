@@ -42,32 +42,7 @@ const generateCode = () => {
 };
 
 
-// =====================================
-// Calcular fecha límite
-// =====================================
 
-const calculateDeadline = (id_prioridad) => {
-
-    const dias = {
-
-        1: 30,
-
-        2: 20,
-
-        3: 10,
-
-        4: 5
-
-    };
-
-    const fecha = new Date();
-
-    fecha.setDate(
-        fecha.getDate() + dias[id_prioridad]
-    );
-
-    return fecha;
-};
 
 
 // =====================================
@@ -168,7 +143,13 @@ const createTicketFromIncident = async (
 
     }
 
-    const id_prioridad = 2;
+    const id_prioridad = incidencia.id_prioridad_predeterminada;
+
+    if (!id_prioridad) {
+        throw new Error(
+            'La categoría de la incidencia no tiene una prioridad predeterminada configurada'
+        );
+    }
 
     const ticket = {
 
@@ -183,10 +164,7 @@ const createTicketFromIncident = async (
 
         id_prioridad,
 
-        fecha_limite:
-            calculateDeadline(
-                id_prioridad
-            )
+        fecha_limite: null
 
     };
 
@@ -350,7 +328,13 @@ const findById = async (
 
 };
 
+// =====================================
+// Buscar ticket por incidencia
+// =====================================
 
+const findByIncidencia = async (id_incidencia) => {
+    return await repository.findByIncidencia(id_incidencia);
+};
 // =====================================
 // Listar tickets
 // =====================================
@@ -1193,6 +1177,8 @@ module.exports = {
     createTicketFromIncident,
 
     findById,
+
+    findByIncidencia,
 
     findAll,
 

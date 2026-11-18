@@ -1,9 +1,12 @@
-const service =
+﻿const service =
     require('./solicitudes_incidencias.service');
 
 
 const validator =
     require('./solicitudes_incidencias.validator');
+
+const generarSolicitudAdministrativa =
+    require('./solicitud-administrativa.pdf');
 
 
 // =====================================
@@ -183,7 +186,7 @@ const findByTicket = async (
 
 
 // =====================================
-// OBTENER SAIU POR CÓDIGO
+// OBTENER SAIU POR CÃ“DIGO
 // =====================================
 
 const findByCodigo = async (
@@ -217,7 +220,7 @@ const findByCodigo = async (
     } catch (error) {
 
         console.error(
-            'Error obteniendo SAIU por código:',
+            'Error obteniendo SAIU por cÃ³digo:',
             error
         );
 
@@ -278,7 +281,7 @@ const registerExpediente = async (
         return res.status(200).json({
 
             mensaje:
-                'Número de expediente registrado correctamente',
+                'NÃºmero de expediente registrado correctamente',
 
             data:
                 saiu
@@ -404,8 +407,74 @@ const getAdministrativeRequest = async (
 
 
 // =====================================
-// CONFIRMAR RECEPCIÓN DEL SAIU
+// CONFIRMAR RECEPCIÃ“N DEL SAIU
 // =====================================
+
+
+// =====================================
+// GENERAR PDF DE SOLICITUD ADMINISTRATIVA
+// =====================================
+
+const generateAdministrativeRequestPdf = async (req, res) => {
+    try {
+        const id_saiu = validator.validateId(
+            req.params.id_saiu,
+            'id_saiu'
+        );
+
+        const solicitud = await service.getAdministrativeRequest(id_saiu);
+
+        const codigoOriginal =
+            solicitud?.saiu?.codigo_saiu || `SAIU-${id_saiu}`;
+
+        const codigo = String(codigoOriginal)
+            .replace(/[^a-zA-Z0-9_-]/g, '_');
+
+        const pdf = generarSolicitudAdministrativa(solicitud);
+
+        pdf.on('error', (error) => {
+            console.error(
+                'Error generando PDF de solicitud administrativa:',
+                error
+            );
+
+            if (!res.headersSent) {
+                res.status(500).json({
+                    mensaje: 'No se pudo generar el PDF de la solicitud administrativa'
+                });
+            } else {
+                res.destroy(error);
+            }
+        });
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader(
+            'Content-Disposition',
+            `inline; filename="Solicitud-${codigo}.pdf"`
+        );
+        res.setHeader('Cache-Control', 'private, no-store');
+
+        pdf.pipe(res);
+        pdf.end();
+    } catch (error) {
+        console.error(
+            'Error preparando PDF de solicitud administrativa:',
+            error
+        );
+
+        if (!res.headersSent) {
+            const noEncontrada =
+                error.message &&
+                error.message.includes('No existe una solicitud administrativa');
+
+            return res.status(noEncontrada ? 404 : 400).json({
+                mensaje: error.message
+            });
+        }
+
+        res.destroy(error);
+    }
+};
 
 const receiveSAIU = async (
     req,
@@ -433,7 +502,7 @@ const receiveSAIU = async (
         return res.status(200).json({
 
             mensaje:
-                'Trámite administrativo recibido correctamente',
+                'TrÃ¡mite administrativo recibido correctamente',
 
             data:
                 recibido
@@ -443,7 +512,7 @@ const receiveSAIU = async (
     } catch (error) {
 
         console.error(
-            'Error confirmando recepción del SAIU:',
+            'Error confirmando recepciÃ³n del SAIU:',
             error
         );
 
@@ -461,7 +530,7 @@ const receiveSAIU = async (
 
 
 // =====================================
-// CORREGIR NÚMERO DE EXPEDIENTE
+// CORREGIR NÃšMERO DE EXPEDIENTE
 // =====================================
 
 const updateExpediente = async (
@@ -508,7 +577,7 @@ const updateExpediente = async (
         return res.status(200).json({
 
             mensaje:
-                'Número de expediente corregido correctamente',
+                'NÃºmero de expediente corregido correctamente',
 
             data:
                 actualizado
@@ -555,6 +624,7 @@ module.exports = {
 
     getAdministrativeRequest,
 
+    generateAdministrativeRequestPdf,
     receiveSAIU,
 
     updateExpediente

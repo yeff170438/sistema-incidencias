@@ -688,22 +688,18 @@ const findAll = async () => {
 // OBTENER SOLICITUD ADMINISTRATIVA COMPLETA
 // =====================================
 
-const getAdministrativeRequest = async (
-    id_saiu
-) => {
+
+const getAdministrativeRequest = async (id_saiu) => {
 
     // =====================================
     // VALIDAR ID
     // =====================================
 
-    if (!id_saiu) {
-
+    if (!id_saiu || !Number.isInteger(Number(id_saiu)) || Number(id_saiu) <= 0) {
         throw new Error(
-            'El ID del SAIU es obligatorio'
+            'El ID del SAIU es obligatorio y debe ser válido'
         );
-
     }
-
 
     // =====================================
     // BUSCAR SOLICITUD COMPLETA
@@ -711,18 +707,14 @@ const getAdministrativeRequest = async (
 
     const solicitud =
         await repository.findAdministrativeRequestBySAIU(
-            id_saiu
+            Number(id_saiu)
         );
 
-
     if (!solicitud) {
-
         throw new Error(
             'No existe una solicitud administrativa asociada al SAIU'
         );
-
     }
-
 
     // =====================================
     // VALIDAR MODALIDAD
@@ -732,23 +724,19 @@ const getAdministrativeRequest = async (
         solicitud.modalidad_atencion !==
         'SOLICITUD_ADMINISTRATIVA'
     ) {
-
         throw new Error(
             'El ticket no corresponde a una solicitud administrativa'
         );
-
     }
+
     // =====================================
     // OBTENER EVIDENCIAS
     // =====================================
 
     const evidencias =
         await archivosService.findByIncident(
-
             solicitud.id_incidencia,
-
             solicitud.id_ciudadano
-
         );
 
     // =====================================
@@ -756,119 +744,60 @@ const getAdministrativeRequest = async (
     // =====================================
 
     return {
-
         saiu: {
-
-            id_saiu:
-                solicitud.id_saiu,
-
-            codigo_saiu:
-                solicitud.codigo_saiu,
-
-            id_ticket:
-                solicitud.id_ticket,
-
-            id_usuario:
-                solicitud.id_usuario_saiu,
-
-            id_oficina:
-                solicitud.id_oficina,
-
-            estado:
-                solicitud.estado_saiu,
-
-            fecha_generacion:
-                solicitud.fecha_generacion,
-
-            numero_expediente:
-                solicitud.numero_expediente,
-
-            fecha_expediente:
-                solicitud.fecha_expediente
-
+            id_saiu: solicitud.id_saiu,
+            codigo_saiu: solicitud.codigo_saiu,
+            id_ticket: solicitud.id_ticket,
+            id_usuario: solicitud.id_usuario_saiu,
+            id_oficina: solicitud.id_oficina,
+            estado: solicitud.estado_saiu,
+            fecha_generacion: solicitud.fecha_generacion,
+            numero_expediente: solicitud.numero_expediente,
+            fecha_expediente: solicitud.fecha_expediente
         },
-
 
         ticket: {
-
-            id_ticket:
-                solicitud.id_ticket,
-
-            codigo_ticket:
-                solicitud.codigo_ticket,
-
-            modalidad_atencion:
-                solicitud.modalidad_atencion,
-
-            id_prioridad:
-                solicitud.id_prioridad,
-
-            fecha_creacion:
-                solicitud.fecha_creacion,
-
-            fecha_limite:
-                solicitud.fecha_limite
-
+            id_ticket: solicitud.id_ticket,
+            codigo_ticket: solicitud.codigo_ticket,
+            modalidad_atencion: solicitud.modalidad_atencion,
+            id_prioridad: solicitud.id_prioridad,
+            fecha_creacion: solicitud.fecha_creacion,
+            fecha_limite: solicitud.fecha_limite
         },
-
 
         ciudadano: {
-
-            id_ciudadano:
-                solicitud.id_ciudadano,
-
-            nombres:
-                solicitud.nombres,
-
-            apellido_paterno:
-                solicitud.apellido_paterno,
-
-            apellido_materno:
-                solicitud.apellido_materno,
-
-            dni:
-                solicitud.dni,
-
-            telefono:
-                solicitud.telefono,
-
-            correo:
-                solicitud.correo
-
+            id_ciudadano: solicitud.id_ciudadano,
+            nombres: solicitud.nombres,
+            apellido_paterno: solicitud.apellido_paterno,
+            apellido_materno: solicitud.apellido_materno,
+            dni: solicitud.dni,
+            telefono: solicitud.telefono,
+            correo: solicitud.correo
         },
-
 
         incidencia: {
+            id_incidencia: solicitud.id_incidencia,
+            titulo: solicitud.titulo,
+            descripcion: solicitud.descripcion,
+            ubicacion: solicitud.ubicacion,
 
-            id_incidencia:
-                solicitud.id_incidencia,
-
-            titulo:
-                solicitud.titulo,
-
-            descripcion:
-                solicitud.descripcion,
-
-            ubicacion:
-                solicitud.ubicacion
-
+            // Datos adicionales para el PDF
+            categoria: solicitud.categoria,
+            direccion_texto: solicitud.direccion_texto,
+            referencia: solicitud.referencia,
+            latitud: solicitud.latitud,
+            longitud: solicitud.longitud
         },
-
 
         oficina_responsable: {
-
-            id_oficina:
-                solicitud.id_oficina,
-
-            nombre:
-                solicitud.oficina_nombre
-
+            id_oficina: solicitud.id_oficina,
+            nombre: solicitud.oficina_nombre
         },
-         evidencias
 
+        evidencias
     };
-
 };
+
 
 
 

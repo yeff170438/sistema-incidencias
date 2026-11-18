@@ -1,0 +1,333 @@
+/* =========================================================
+   TOPBAR
+========================================================= */
+
+.app-topbar {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  z-index: 1020;
+}
+
+.topbar-left,
+.topbar-right {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.topbar-right {
+  gap: 18px;
+}
+
+.topbar-page-context {
+  min-width: 0;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.mobile-menu-button {
+  display: none;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: #374151;
+  font-size: 23px;
+  cursor: pointer;
+}
+
+.topbar-icon-button {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: #4b5563;
+  font-size: 19px;
+  cursor: pointer;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -1px;
+  right: -2px;
+  min-width: 17px;
+  height: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #dc2626;
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.topbar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.user-avatar {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.user-details {
+  min-width: 0;
+}
+
+.user-name {
+  color: #111827;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.user-role {
+  margin-top: 2px;
+  color: #6b7280;
+  font-size: 11px;
+}
+
+.user-arrow {
+  flex-shrink: 0;
+  color: #9ca3af;
+  font-size: 11px;
+}
+
+/* =========================================================
+   TOPBAR RESPONSIVE
+========================================================= */
+
+@media (max-width: 1000px) {
+  .mobile-menu-button {
+    display: flex;
+  }
+
+  .app-topbar {
+    padding: 0 18px;
+  }
+}
+
+@media (max-width: 576px) {
+  .topbar-page-context {
+    display: none;
+  }
+
+  .user-details,
+  .user-arrow {
+    display: none;
+  }
+}
+
+/* =========================================================
+   TOPBAR - BOTÓN DE USUARIO
+========================================================= */
+
+.topbar-user-menu {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.topbar-user-trigger {
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.topbar-user-trigger:hover {
+  background: #f8fafc;
+}
+
+.topbar-user-trigger:focus-visible {
+  outline: 2px solid #93b4f5;
+  outline-offset: 2px;
+}
+
+
+/* =========================================================
+   MENÚ DESPLEGABLE
+========================================================= */
+
+.topbar-user-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 1050;
+
+  width: 260px;
+  max-width: calc(100vw - 24px);
+  padding: 8px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 12px 32px rgba(15, 23, 42, 0.14),
+    0 2px 6px rgba(15, 23, 42, 0.05);
+
+  animation: topbar-dropdown-enter 0.15s ease-out;
+}
+
+.topbar-dropdown-header {
+  padding: 12px;
+}
+
+.topbar-dropdown-name {
+  color: #0f172a;
+  font-size: 0.85rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.topbar-dropdown-role {
+  margin-top: 4px;
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+.topbar-dropdown-divider {
+  height: 1px;
+  margin: 4px 0;
+  background: #eef2f7;
+}
+
+
+/* =========================================================
+   CERRAR SESIÓN
+========================================================= */
+
+.topbar-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background: transparent;
+
+  font-family: inherit;
+  font-size: 0.8rem;
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.topbar-dropdown-item i {
+  font-size: 1rem;
+}
+
+.topbar-dropdown-item.logout {
+  color: #dc2626;
+}
+
+.topbar-dropdown-item.logout:hover {
+  background: #fef2f2;
+}
+
+.topbar-dropdown-item:focus-visible {
+  outline: 2px solid #93b4f5;
+  outline-offset: 2px;
+}
+
+
+/* =========================================================
+   BOTÓN DE NOTIFICACIONES
+========================================================= */
+
+.topbar-icon-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.topbar-icon-button:focus-visible {
+  outline: 2px solid #93b4f5;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+
+/* =========================================================
+   ANIMACIÓN
+========================================================= */
+
+@keyframes topbar-dropdown-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 576px) {
+  .topbar-right {
+    gap: 8px;
+  }
+
+  .topbar-user-trigger {
+    gap: 7px;
+    padding: 4px;
+  }
+
+  .topbar-user-dropdown {
+    right: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topbar-user-dropdown {
+    animation: none;
+  }
+}

@@ -469,112 +469,58 @@ const resolveTicket = async (
 // =====================================
 // Obtener incidencia para generar ticket
 // =====================================
-
-const findIncidentForTicket = async(id_incidencia)=>{
-
-
+const findIncidentForTicket = async (id_incidencia) => {
     const query = `
-
         SELECT
-
             i.id_incidencia,
-
             i.id_ciudadano,
-
             i.id_categoria,
-
             i.codigo_incidencia,
-
             i.id_estado,
-
             c.nombre AS categoria,
-
-            c.id_oficina_predeterminada
-
-
+            c.id_oficina_predeterminada,
+            c.id_prioridad_predeterminada
         FROM incidencias i
-
-
         INNER JOIN categorias c
-
-        ON i.id_categoria = c.id_categoria
-
-
-        WHERE i.id_incidencia=$1;
-
+            ON i.id_categoria = c.id_categoria
+        WHERE i.id_incidencia = $1;
     `;
 
+    const result = await pool.query(query, [id_incidencia]);
 
-
-    const result =
-        await pool.query(
-
-            query,
-
-            [
-                id_incidencia
-            ]
-
-        );
-
-
-    return result.rows[0];
-
-
+    return result.rows[0] || null;
 };
 
 // =====================================
 // Cerrar ticket
 // =====================================
 
+// =====================================
+// Cerrar ticket
+// =====================================
+
 const closeTicket = async (
-
     id_ticket,
-
     id_estado,
-
     observacion_cierre
-
 ) => {
-
     const query = `
-
         UPDATE tickets
-
         SET
-
             id_estado = $1,
-
             fecha_cierre = CURRENT_TIMESTAMP,
-
             observacion_cierre = $2
-
-        WHERE
-
-            id_ticket = $3
-
+        WHERE id_ticket = $3
         RETURNING *;
-
     `;
 
-    const result = await pool.query(
-
-        query,
-
-        [
-
-            id_estado,
-
-            observacion_cierre,
-
-            id_ticket
-
-        ]
-
-    );
+    const result = await pool.query(query, [
+        id_estado,
+        observacion_cierre,
+        id_ticket
+    ]);
 
     return result.rows[0];
-
 };
 
 const updateTicketState = async (

@@ -679,13 +679,70 @@ const finishAttentionByDerivation =
         return result.rows[0];
 
     };
+// =====================================
+// LISTAR TODAS LAS ATENCIONES
+// =====================================
+const findAll = async () => {
 
+    const query = `
+        SELECT
+            a.id_atencion,
+            a.id_ticket,
+            a.id_asignacion,
+            a.id_oficina,
+            a.id_usuario,
+            a.descripcion_atencion,
+            a.resultado,
+            a.conclusion,
+            a.fecha_inicio,
+            a.fecha_actualizacion,
+            a.fecha_fin,
+
+            t.codigo_ticket,
+            t.id_estado AS id_estado_ticket,
+            cet.nombre AS estado_ticket,
+
+            i.id_incidencia,
+            i.codigo_incidencia,
+            i.id_ciudadano,
+
+            o.nombre AS oficina,
+            u.nombre AS usuario
+
+        FROM atenciones a
+
+        INNER JOIN tickets t
+            ON a.id_ticket = t.id_ticket
+
+        INNER JOIN catalogo_estados cet
+            ON t.id_estado = cet.id_estado
+
+        INNER JOIN incidencias i
+            ON t.id_incidencia = i.id_incidencia
+
+        INNER JOIN oficinas o
+            ON a.id_oficina = o.id_oficina
+
+        INNER JOIN usuarios u
+            ON a.id_usuario = u.id_usuario
+
+        ORDER BY
+            a.fecha_inicio DESC,
+            a.id_atencion DESC;
+    `;
+
+    const result = await pool.query(query);
+
+    return result.rows;
+};
 
 module.exports = {
 
     create,
 
     findById,
+
+    findAll,
 
     findByTicket,
 

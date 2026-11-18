@@ -7,11 +7,12 @@
 -- Contiene:
 -- - Incidencias
 -- - Tickets
+-- - Motivos de derivación
 -- - Asignaciones
 -- - Derivaciones
 -- - Atenciones
+-- - Solicitudes de Atención de Incidencia Urbana (SAIU)
 -- =====================================================
-
 
 
 -- =====================================================
@@ -42,30 +43,55 @@ CREATE TABLE incidencias (
 
     ubicacion geometry(Point,4326) NOT NULL,
 
-    fecha_reporte TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_reporte TIMESTAMP NOT NULL
+        DEFAULT CURRENT_TIMESTAMP,
+
+
+    -- =====================================
+    -- RELACIONES
+    -- =====================================
 
     CONSTRAINT fk_incidencia_ciudadano
+
         FOREIGN KEY (id_ciudadano)
+
         REFERENCES ciudadanos(id_ciudadano)
+
         ON UPDATE CASCADE
+
         ON DELETE RESTRICT,
+
 
     CONSTRAINT fk_incidencia_categoria
+
         FOREIGN KEY (id_categoria)
+
         REFERENCES categorias(id_categoria)
+
         ON UPDATE CASCADE
+
         ON DELETE RESTRICT,
 
+
     CONSTRAINT fk_incidencia_sector
+
         FOREIGN KEY (id_sector)
+
         REFERENCES sectores(id_sector)
+
         ON UPDATE CASCADE
+
         ON DELETE SET NULL,
 
+
     CONSTRAINT fk_incidencia_estado
+
         FOREIGN KEY (id_estado)
+
         REFERENCES catalogo_estados(id_estado)
+
         ON UPDATE CASCADE
+
         ON DELETE RESTRICT
 
 );
@@ -88,9 +114,10 @@ CREATE TABLE tickets (
 
     id_prioridad INT NOT NULL,
 
-    fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_creacion TIMESTAMP NOT NULL
+        DEFAULT CURRENT_TIMESTAMP,
 
-    fecha_limite TIMESTAMP NOT NULL,
+    fecha_limite TIMESTAMP,
 
     fecha_resolucion TIMESTAMP,
 
@@ -98,41 +125,88 @@ CREATE TABLE tickets (
 
     observacion_cierre TEXT,
 
+    modalidad_atencion VARCHAR(30),
+
+
+    -- =====================================
+    -- RELACIONES
+    -- =====================================
+
     CONSTRAINT fk_ticket_incidencia
+
         FOREIGN KEY (id_incidencia)
+
         REFERENCES incidencias(id_incidencia)
+
         ON UPDATE CASCADE
+
         ON DELETE CASCADE,
 
+
     CONSTRAINT fk_ticket_estado
+
         FOREIGN KEY (id_estado)
+
         REFERENCES catalogo_estados(id_estado)
+
         ON UPDATE CASCADE
+
         ON DELETE RESTRICT,
 
+
     CONSTRAINT fk_ticket_prioridad
+
         FOREIGN KEY (id_prioridad)
+
         REFERENCES prioridades(id_prioridad)
+
         ON UPDATE CASCADE
-        ON DELETE RESTRICT
+
+        ON DELETE RESTRICT,
+
+
+    -- =====================================
+    -- MODALIDAD DE ATENCIÓN
+    -- =====================================
+
+    CONSTRAINT chk_ticket_modalidad_atencion
+
+        CHECK (
+
+            modalidad_atencion IS NULL
+
+            OR modalidad_atencion IN (
+
+                'ATENCION_DIRECTA',
+
+                'SOLICITUD_ADMINISTRATIVA'
+
+            )
+
+        )
 
 );
 
+
+
 -- =====================================================
--- MODALIDAD DE ATENCIÓN DEL TICKET
+-- TABLA: MOTIVOS_DERIVACION
+-- Catálogo de motivos para transferir tickets
 -- =====================================================
 
-ALTER TABLE tickets
-ADD COLUMN modalidad_atencion VARCHAR(30);
+CREATE TABLE motivos_derivacion (
 
-ALTER TABLE tickets
-ADD CONSTRAINT chk_ticket_modalidad_atencion
-CHECK (
-    modalidad_atencion IN (
-        'ATENCION_DIRECTA',
-        'SOLICITUD_ADMINISTRATIVA'
-    )
+    id_motivo SERIAL PRIMARY KEY,
+
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+
+    descripcion TEXT,
+
+    activo BOOLEAN NOT NULL DEFAULT TRUE
+
 );
+
+
 
 -- =====================================================
 -- TABLA: ASIGNACIONES
@@ -152,7 +226,8 @@ CREATE TABLE asignaciones (
 
     id_estado INT NOT NULL,
 
-    fecha_asignacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_asignacion TIMESTAMP NOT NULL
+        DEFAULT CURRENT_TIMESTAMP,
 
     fecha_recepcion TIMESTAMP,
 
@@ -160,34 +235,63 @@ CREATE TABLE asignaciones (
 
     observacion TEXT,
 
+
+    -- =====================================
+    -- RELACIONES
+    -- =====================================
+
     CONSTRAINT fk_asignacion_ticket
+
         FOREIGN KEY (id_ticket)
+
         REFERENCES tickets(id_ticket)
+
         ON UPDATE CASCADE
+
         ON DELETE CASCADE,
 
+
     CONSTRAINT fk_asignacion_oficina
+
         FOREIGN KEY (id_oficina)
+
         REFERENCES oficinas(id_oficina)
+
         ON UPDATE CASCADE
+
         ON DELETE RESTRICT,
 
+
     CONSTRAINT fk_asignacion_usuario
+
         FOREIGN KEY (id_usuario)
+
         REFERENCES usuarios(id_usuario)
+
         ON UPDATE CASCADE
+
         ON DELETE SET NULL,
+
 
     CONSTRAINT fk_asignacion_receptor
+
         FOREIGN KEY (usuario_receptor)
+
         REFERENCES usuarios(id_usuario)
+
         ON UPDATE CASCADE
+
         ON DELETE SET NULL,
 
+
     CONSTRAINT fk_asignacion_estado
+
         FOREIGN KEY (id_estado)
+
         REFERENCES catalogo_estados(id_estado)
+
         ON UPDATE CASCADE
+
         ON DELETE RESTRICT
 
 );
@@ -202,28 +306,25 @@ CREATE TABLE derivaciones (
 
     id_derivacion SERIAL PRIMARY KEY,
 
-
     id_ticket INT NOT NULL,
-
 
     oficina_origen INT NOT NULL,
 
-
     oficina_destino INT NOT NULL,
-
 
     id_usuario INT NOT NULL,
 
-
     id_motivo INT NOT NULL,
-
 
     comentario TEXT,
 
+    fecha_derivacion TIMESTAMP NOT NULL
+        DEFAULT CURRENT_TIMESTAMP,
 
-    fecha_derivacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-
+    -- =====================================
+    -- RELACIONES
+    -- =====================================
 
     CONSTRAINT fk_derivacion_ticket
 
@@ -234,7 +335,6 @@ CREATE TABLE derivaciones (
         ON UPDATE CASCADE
 
         ON DELETE CASCADE,
-
 
 
     CONSTRAINT fk_derivacion_origen
@@ -248,7 +348,6 @@ CREATE TABLE derivaciones (
         ON DELETE RESTRICT,
 
 
-
     CONSTRAINT fk_derivacion_destino
 
         FOREIGN KEY (oficina_destino)
@@ -260,7 +359,6 @@ CREATE TABLE derivaciones (
         ON DELETE RESTRICT,
 
 
-
     CONSTRAINT fk_derivacion_usuario
 
         FOREIGN KEY (id_usuario)
@@ -270,7 +368,6 @@ CREATE TABLE derivaciones (
         ON UPDATE CASCADE
 
         ON DELETE RESTRICT,
-
 
 
     CONSTRAINT fk_derivacion_motivo
@@ -285,22 +382,7 @@ CREATE TABLE derivaciones (
 
 );
 
--- ==========================================
--- TABLA: motivos_derivacion
--- Catálogo de motivos para transferir tickets
--- ==========================================
 
-CREATE TABLE motivos_derivacion (
-
-    id_motivo SERIAL PRIMARY KEY,
-
-    nombre VARCHAR(100) NOT NULL UNIQUE,
-
-    descripcion TEXT,
-
-    activo BOOLEAN NOT NULL DEFAULT TRUE
-
-);
 
 -- =====================================================
 -- TABLA: ATENCIONES
@@ -324,7 +406,8 @@ CREATE TABLE atenciones (
 
     conclusion TEXT,
 
-    fecha_registro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_registro TIMESTAMP NOT NULL
+        DEFAULT CURRENT_TIMESTAMP,
 
     fecha_inicio TIMESTAMP NOT NULL,
 
@@ -332,28 +415,52 @@ CREATE TABLE atenciones (
 
     fecha_actualizacion TIMESTAMP,
 
+
+    -- =====================================
+    -- RELACIONES
+    -- =====================================
+
     CONSTRAINT fk_atencion_ticket
+
         FOREIGN KEY (id_ticket)
+
         REFERENCES tickets(id_ticket)
+
         ON UPDATE CASCADE
+
         ON DELETE CASCADE,
 
+
     CONSTRAINT fk_atencion_asignacion
+
         FOREIGN KEY (id_asignacion)
+
         REFERENCES asignaciones(id_asignacion)
+
         ON UPDATE CASCADE
+
         ON DELETE RESTRICT,
+
 
     CONSTRAINT fk_atencion_oficina
+
         FOREIGN KEY (id_oficina)
+
         REFERENCES oficinas(id_oficina)
+
         ON UPDATE CASCADE
+
         ON DELETE RESTRICT,
 
+
     CONSTRAINT fk_atencion_usuario
+
         FOREIGN KEY (id_usuario)
+
         REFERENCES usuarios(id_usuario)
+
         ON UPDATE CASCADE
+
         ON DELETE RESTRICT
 
 );
@@ -361,112 +468,19 @@ CREATE TABLE atenciones (
 
 
 -- =====================================================
--- ÍNDICES
--- =====================================================
-
-CREATE INDEX idx_incidencias_ciudadano
-ON incidencias(id_ciudadano);
-
-CREATE INDEX idx_incidencias_categoria
-ON incidencias(id_categoria);
-
-CREATE INDEX idx_incidencias_sector
-ON incidencias(id_sector);
-
-CREATE INDEX idx_tickets_estado
-ON tickets(id_estado);
-
-CREATE INDEX idx_tickets_prioridad
-ON tickets(id_prioridad);
-
-CREATE INDEX idx_asignaciones_ticket
-ON asignaciones(id_ticket);
-
-CREATE INDEX idx_derivaciones_ticket
-ON derivaciones(id_ticket);
-
-CREATE INDEX idx_atenciones_ticket
-ON atenciones(id_ticket);
-
-CREATE INDEX idx_incidencias_ubicacion
-ON incidencias
-USING GIST (ubicacion);
-
-
--- =====================================================
--- TABLA: SOLICITUDES DE ATENCIÓN DE INCIDENCIA URBANA
--- =====================================================
-
-CREATE TABLE solicitudes_incidencia (
-
-    id_saiu SERIAL PRIMARY KEY,
-
-    id_ticket INT NOT NULL UNIQUE,
-
-    codigo_saiu VARCHAR(30) NOT NULL UNIQUE,
-
-    id_usuario INT NOT NULL,
-
-    id_oficina INT,
-
-    fecha_generacion TIMESTAMP NOT NULL
-        DEFAULT CURRENT_TIMESTAMP,
-
-    numero_expediente VARCHAR(60) UNIQUE,
-
-    fecha_expediente TIMESTAMP,
-
-    estado VARCHAR(30) NOT NULL
-        DEFAULT 'PENDIENTE_EXPEDIENTE',
-
-    fecha_vinculacion TIMESTAMP,
-
-    observacion TEXT,
-
-    CONSTRAINT fk_saiu_ticket
-        FOREIGN KEY (id_ticket)
-        REFERENCES tickets(id_ticket)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-
-    CONSTRAINT fk_saiu_usuario
-        FOREIGN KEY (id_usuario)
-        REFERENCES usuarios(id_usuario)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-
-    CONSTRAINT fk_saiu_oficina
-        FOREIGN KEY (id_oficina)
-        REFERENCES oficinas(id_oficina)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-
-    CONSTRAINT chk_saiu_estado
-        CHECK (
-            estado IN (
-                'PENDIENTE_EXPEDIENTE',
-                'EXPEDIENTE_REGISTRADO',
-                'VINCULADO',
-                'EN_ATENCION',
-                'RESUELTO',
-                'CERRADO'
-            )
-        )
-
-);
-
--- =====================================================
--- TABLA: SOLICITUDES DE ATENCIÓN DE INCIDENCIA URBANA
+-- TABLA: SOLICITUDES_INCIDENCIA
 -- SAIU
+--
+-- Un ticket puede generar como máximo un SAIU.
 -- =====================================================
 
 CREATE TABLE solicitudes_incidencia (
 
     id_saiu SERIAL PRIMARY KEY,
+
 
     -- =====================================
     -- TICKET ASOCIADO
-    -- Un ticket solamente puede tener un SAIU
     -- =====================================
 
     id_ticket INT NOT NULL UNIQUE,
@@ -474,7 +488,6 @@ CREATE TABLE solicitudes_incidencia (
 
     -- =====================================
     -- CÓDIGO SAIU
-    -- Generado por el sistema
     -- =====================================
 
     codigo_saiu VARCHAR(30) NOT NULL UNIQUE,
@@ -489,7 +502,6 @@ CREATE TABLE solicitudes_incidencia (
 
     -- =====================================
     -- OFICINA COMPETENTE
-    -- Puede definirse posteriormente
     -- =====================================
 
     id_oficina INT,
@@ -505,7 +517,6 @@ CREATE TABLE solicitudes_incidencia (
 
     -- =====================================
     -- EXPEDIENTE DE MESA DE PARTES
-    -- Se registra posteriormente
     -- =====================================
 
     numero_expediente VARCHAR(60) UNIQUE,
@@ -514,7 +525,8 @@ CREATE TABLE solicitudes_incidencia (
 
 
     -- =====================================
-    -- ESTADO PROPIO DEL SAIU
+    -- ESTADO DEL SAIU
+    -- FK hacia estados_saiu
     -- =====================================
 
     id_estado_saiu INT NOT NULL,
@@ -583,18 +595,177 @@ CREATE TABLE solicitudes_incidencia (
 
 );
 
+
+
 -- =====================================================
--- ÍNDICES
+-- ÍNDICES DE INCIDENCIAS
+-- =====================================================
+
+CREATE INDEX idx_incidencias_ciudadano
+ON incidencias(id_ciudadano);
+
+
+CREATE INDEX idx_incidencias_categoria
+ON incidencias(id_categoria);
+
+
+CREATE INDEX idx_incidencias_sector
+ON incidencias(id_sector);
+
+
+CREATE INDEX idx_incidencias_estado
+ON incidencias(id_estado);
+
+
+CREATE INDEX idx_incidencias_fecha_reporte
+ON incidencias(fecha_reporte);
+
+
+CREATE INDEX idx_incidencias_ubicacion
+ON incidencias
+USING GIST (ubicacion);
+
+
+
+-- =====================================================
+-- ÍNDICES DE TICKETS
+-- =====================================================
+
+CREATE INDEX idx_tickets_estado
+ON tickets(id_estado);
+
+
+CREATE INDEX idx_tickets_prioridad
+ON tickets(id_prioridad);
+
+
+CREATE INDEX idx_tickets_fecha_creacion
+ON tickets(fecha_creacion);
+
+
+CREATE INDEX idx_tickets_fecha_limite
+ON tickets(fecha_limite);
+
+
+CREATE INDEX idx_tickets_fecha_resolucion
+ON tickets(fecha_resolucion);
+
+
+CREATE INDEX idx_tickets_fecha_cierre
+ON tickets(fecha_cierre);
+
+
+
+-- =====================================================
+-- ÍNDICES DE ASIGNACIONES
+-- =====================================================
+
+CREATE INDEX idx_asignaciones_ticket
+ON asignaciones(id_ticket);
+
+
+CREATE INDEX idx_asignaciones_oficina
+ON asignaciones(id_oficina);
+
+
+CREATE INDEX idx_asignaciones_usuario
+ON asignaciones(id_usuario);
+
+
+CREATE INDEX idx_asignaciones_receptor
+ON asignaciones(usuario_receptor);
+
+
+CREATE INDEX idx_asignaciones_estado
+ON asignaciones(id_estado);
+
+
+CREATE INDEX idx_asignaciones_fecha
+ON asignaciones(fecha_asignacion);
+
+
+
+-- =====================================================
+-- ÍNDICES DE DERIVACIONES
+-- =====================================================
+
+CREATE INDEX idx_derivaciones_ticket
+ON derivaciones(id_ticket);
+
+
+CREATE INDEX idx_derivaciones_origen
+ON derivaciones(oficina_origen);
+
+
+CREATE INDEX idx_derivaciones_destino
+ON derivaciones(oficina_destino);
+
+
+CREATE INDEX idx_derivaciones_usuario
+ON derivaciones(id_usuario);
+
+
+CREATE INDEX idx_derivaciones_motivo
+ON derivaciones(id_motivo);
+
+
+CREATE INDEX idx_derivaciones_fecha
+ON derivaciones(fecha_derivacion);
+
+
+
+-- =====================================================
+-- ÍNDICES DE ATENCIONES
+-- =====================================================
+
+CREATE INDEX idx_atenciones_ticket
+ON atenciones(id_ticket);
+
+
+CREATE INDEX idx_atenciones_asignacion
+ON atenciones(id_asignacion);
+
+
+CREATE INDEX idx_atenciones_oficina
+ON atenciones(id_oficina);
+
+
+CREATE INDEX idx_atenciones_usuario
+ON atenciones(id_usuario);
+
+
+CREATE INDEX idx_atenciones_fecha_inicio
+ON atenciones(fecha_inicio);
+
+
+CREATE INDEX idx_atenciones_fecha_fin
+ON atenciones(fecha_fin);
+
+
+
+-- =====================================================
+-- ÍNDICES DE SAIU
 -- =====================================================
 
 CREATE INDEX idx_saiu_usuario
 ON solicitudes_incidencia(id_usuario);
 
+
 CREATE INDEX idx_saiu_oficina
 ON solicitudes_incidencia(id_oficina);
+
 
 CREATE INDEX idx_saiu_estado
 ON solicitudes_incidencia(id_estado_saiu);
 
+
 CREATE INDEX idx_saiu_fecha_generacion
 ON solicitudes_incidencia(fecha_generacion);
+
+
+CREATE INDEX idx_saiu_fecha_expediente
+ON solicitudes_incidencia(fecha_expediente);
+
+
+CREATE INDEX idx_saiu_fecha_vinculacion
+ON solicitudes_incidencia(fecha_vinculacion);

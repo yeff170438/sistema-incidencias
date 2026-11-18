@@ -810,107 +810,88 @@ const findByExpediente = async (
 // OBTENER SOLICITUD ADMINISTRATIVA COMPLETA
 // =====================================
 
-const findAdministrativeRequestBySAIU = async (
-    id_saiu
-) => {
+const findAdministrativeRequestBySAIU = async (id_saiu) => {
+    const query = `
+        SELECT
+            -- =========================
+            -- SAIU
+            -- =========================
+            s.id_saiu,
+            s.codigo_saiu,
+            s.id_ticket,
+            s.id_usuario AS id_usuario_saiu,
+            s.id_oficina,
+            s.fecha_generacion,
+            s.numero_expediente,
+            s.fecha_expediente,
+            s.id_estado_saiu,
+            es.nombre AS estado_saiu,
 
-const query = `
+            -- =========================
+            -- TICKET
+            -- =========================
+            t.codigo_ticket,
+            t.modalidad_atencion,
+            t.id_prioridad,
+            t.fecha_creacion,
+            t.fecha_limite,
 
-    SELECT
+            -- =========================
+            -- INCIDENCIA
+            -- =========================
+            i.id_incidencia,
+            i.titulo,
+            i.descripcion,
+            i.ubicacion,
+            i.direccion_texto,
+            i.referencia,
+            ST_Y(i.ubicacion) AS latitud,
+            ST_X(i.ubicacion) AS longitud,
+            cat.nombre AS categoria,
 
-        -- =========================
-        -- SAIU
-        -- =========================
+            -- =========================
+            -- CIUDADANO
+            -- =========================
+            c.id_ciudadano,
+            c.dni,
+            c.nombres,
+            c.apellido_paterno,
+            c.apellido_materno,
+            c.telefono,
+            c.correo,
+            c.direccion,
 
-        s.id_saiu,
-        s.codigo_saiu,
-        s.id_ticket,
-        s.id_usuario AS id_usuario_saiu,
-        s.id_oficina,
-        s.fecha_generacion,
-        s.numero_expediente,
-        s.fecha_expediente,
-        s.id_estado_saiu,
-        es.nombre AS estado_saiu,
+            -- =========================
+            -- OFICINA
+            -- =========================
+            o.nombre AS oficina_nombre
 
+        FROM solicitudes_incidencia s
 
-        -- =========================
-        -- TICKET
-        -- =========================
+        INNER JOIN tickets t
+            ON s.id_ticket = t.id_ticket
 
-        t.codigo_ticket,
-        t.modalidad_atencion,
-        t.id_prioridad,
-        t.fecha_creacion,
-        t.fecha_limite,
+        INNER JOIN incidencias i
+            ON t.id_incidencia = i.id_incidencia
 
+        INNER JOIN ciudadanos c
+            ON i.id_ciudadano = c.id_ciudadano
 
-        -- =========================
-        -- INCIDENCIA
-        -- =========================
+        LEFT JOIN categorias cat
+            ON i.id_categoria = cat.id_categoria
 
-        i.id_incidencia,
-        i.titulo,
-        i.descripcion,
-        i.ubicacion,
+        LEFT JOIN oficinas o
+            ON s.id_oficina = o.id_oficina
 
+        INNER JOIN estados_saiu es
+            ON s.id_estado_saiu = es.id_estado_saiu
 
-        -- =========================
-        -- CIUDADANO
-        -- =========================
+        WHERE s.id_saiu = $1;
+    `;
 
-        c.id_ciudadano,
-        c.dni,
-        c.nombres,
-        c.apellido_paterno,
-        c.apellido_materno,
-        c.telefono,
-        c.correo,
-        c.direccion,
-
-
-        -- =========================
-        -- OFICINA
-        -- =========================
-
-        o.nombre AS oficina_nombre
-
-    FROM solicitudes_incidencia s
-
-    INNER JOIN tickets t
-        ON s.id_ticket = t.id_ticket
-
-    INNER JOIN incidencias i
-        ON t.id_incidencia = i.id_incidencia
-
-    INNER JOIN ciudadanos c
-        ON i.id_ciudadano = c.id_ciudadano
-
-    LEFT JOIN oficinas o
-        ON s.id_oficina = o.id_oficina
-
-    INNER JOIN estados_saiu es
-        ON s.id_estado_saiu = es.id_estado_saiu
-
-    WHERE s.id_saiu = $1;
-
-`;
-
-
-    const result =
-        await pool.query(
-
-            query,
-
-            [
-                id_saiu
-            ]
-
-        );
-
+    const result = await pool.query(query, [id_saiu]);
 
     return result.rows[0];
-
 };
 
 

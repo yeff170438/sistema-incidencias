@@ -411,15 +411,126 @@ const rejectIncident = async (req, res) => {
 
 };
 
+// =====================================
+// Listar incidencias para gestión
+// ADMIN y OPERADOR
+// =====================================
+
+const findForManagement = async (req, res) => {
+
+    const rol = String(
+        req.user?.rol ??
+        req.user?.role ??
+        req.user?.nombre_rol ??
+        ''
+    ).trim().toUpperCase();
+
+    if (!['ADMIN', 'OPERADOR'].includes(rol)) {
+
+        return res.status(403).json({
+            message: 'No tienes permisos para consultar todas las incidencias.'
+        });
+
+    }
+
+    try {
+
+        const incidencias =
+            await service.findForManagement();
+
+        return res.status(200).json({
+            incidencias,
+            total: incidencias.length
+        });
+
+    } catch (error) {
+
+        console.error(
+            'Error al listar incidencias para gestión:',
+            error
+        );
+
+        return res.status(500).json({
+            message: 'No se pudieron consultar las incidencias.'
+        });
+
+    }
+
+};
 
 
+const adminEditIncident = async (req, res) => {
+    try {
+        const incidencia = await service.adminEditIncident({
+            id_incidencia: Number(req.params.id),
+            id_usuario: req.user.id_usuario,
 
+            id_categoria: req.body.id_categoria,
+            id_sector: req.body.id_sector,
+            titulo: req.body.titulo,
+            descripcion: req.body.descripcion,
+            direccion_texto: req.body.direccion_texto,
+            referencia: req.body.referencia,
+            longitud: req.body.longitud,
+            latitud: req.body.latitud
+        });
+
+        return res.status(200).json({
+            message: 'Incidencia actualizada correctamente.',
+            incidencia
+        });
+
+    } catch (error) {
+        return res.status(400).json({
+            message: error.message
+        });
+    }
+};
+// =====================================
+// Historial de incidencias por ciudadano
+// Consulta administrativa
+// =====================================
+
+const findByCitizenAdmin = async (req, res) => {
+    try {
+        const idCiudadano = Number(req.params.id);
+
+        if (!Number.isInteger(idCiudadano) || idCiudadano <= 0) {
+            return res.status(400).json({
+                message: 'El ID del ciudadano no es válido'
+            });
+        }
+
+        const incidencias = await service.findForManagement();
+
+        const historial = incidencias.filter(
+            incidencia =>
+                Number(incidencia.id_ciudadano) === idCiudadano
+        );
+
+        return res.status(200).json({
+            incidencias: historial,
+            total: historial.length
+        });
+    } catch (error) {
+        console.error(
+            'Error al consultar historial del ciudadano:',
+            error
+        );
+
+        return res.status(500).json({
+            message: 'Error al consultar el historial de incidencias'
+        });
+    }
+};
 // =====================================
 // Exportar
 // =====================================
 module.exports = {
 
     create,
+
+    findByCitizenAdmin,
 
     findByCitizen,
 
@@ -429,7 +540,11 @@ module.exports = {
 
     validateIncident,
 
+    findForManagement,
+
     observeIncident,
+    
+    adminEditIncident,
 
     correctIncident,
 

@@ -1,0 +1,43 @@
+/* =========================================================
+   APP LAYOUT
+========================================================= */
+
+.app-shell {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.app-main {
+  width: calc(100% - 260px);
+  min-width: 0;
+  min-height: 100vh;
+  margin-left: 260px;
+}
+
+.app-content {
+  width: 100%;
+  min-width: 0;
+  padding: 28px;
+  overflow-x: hidden;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1000px) {
+  .app-main {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .app-content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .app-content {
+    padding: 16px;
+  }
+}

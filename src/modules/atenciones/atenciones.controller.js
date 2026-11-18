@@ -329,14 +329,33 @@ const finishAttentionByDerivation =
 
     };
 
+// =====================================
+// Listar todas las atenciones
+// =====================================
 
+const findAll = async (req, res) => {
+    try {
+        const atenciones = await service.findAll();
+
+        return res.status(200).json({
+            atenciones
+        });
+    } catch (error) {
+        console.error('Error al listar atenciones:', error);
+
+        return res.status(500).json({
+            message: 'Error al consultar las atenciones.'
+        });
+    }
+};
 
 // =====================================
 // EXPORTAR
 // =====================================
 
 module.exports = {
-
+    findAll,
+    
     startAttention,
 
     updateProgress,

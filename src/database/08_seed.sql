@@ -420,41 +420,100 @@ VALUES
 -- PRIORIDADES
 -- =====================================================
 
-INSERT INTO prioridades
-(
+-- =====================================================
+-- PRIORIDADES
+-- Orden de preferencia de atención
+-- =====================================================
+
+INSERT INTO prioridades (
     nombre,
     descripcion,
-    tiempo_maximo_horas
+    orden_atencion
 )
-
 VALUES
-
 (
-'Baja',
-'Incidencia de baja prioridad',
-72
+    'Baja',
+    'Incidencia de baja prioridad',
+    4
 ),
-
 (
-'Media',
-'Incidencia de prioridad media',
-48
+    'Media',
+    'Incidencia de prioridad media',
+    3
 ),
-
 (
-'Alta',
-'Incidencia urgente',
-24
+    'Alta',
+    'Incidencia de alta prioridad',
+    2
 ),
-
 (
-'Crítica',
-'Emergencia',
-4
-
+    'Crítica',
+    'Incidencia de máxima prioridad',
+    1
 );
 
+-- =====================================================
+-- PRIORIDAD AUTOMÁTICA DE CATEGORÍAS
+-- =====================================================
 
+UPDATE categorias AS c
+SET id_prioridad_predeterminada = p.id_prioridad
+FROM (
+    VALUES
+        ('Publicidad no autorizada', 'Baja'),
+        ('Problemas de numeración urbana', 'Baja'),
+        ('Problemas de información catastral', 'Baja'),
+        ('Conflicto de ubicación predial', 'Baja'),
+        ('Estacionamiento indebido', 'Baja'),
+        ('Animal abandonado', 'Baja'),
+        ('Comercio informal', 'Baja'),
+        ('Comercio sin condiciones adecuadas', 'Baja'),
+
+        ('Baches y deterioro de vías', 'Media'),
+        ('Veredas deterioradas', 'Media'),
+        ('Deterioro de espacios públicos', 'Media'),
+        ('Acumulación de residuos sólidos', 'Media'),
+        ('Recojo deficiente de residuos', 'Media'),
+        ('Construcción sin autorización', 'Media'),
+        ('Ocupación indebida de espacio público', 'Media'),
+        ('Invasión de áreas municipales', 'Media'),
+        ('Consumo de alcohol en vía pública', 'Media'),
+        ('Problemas ambientales urbanos', 'Media'),
+        ('Ocupación comercial de vía pública', 'Media'),
+
+        ('Daños en infraestructura urbana', 'Alta'),
+        ('Punto crítico de residuos', 'Alta'),
+        ('Botadero informal', 'Alta'),
+        ('Zona insegura', 'Alta'),
+        ('Alteración del orden público', 'Alta'),
+        ('Solicitud de intervención de serenazgo', 'Alta'),
+        ('Señalización vial deteriorada', 'Alta'),
+        ('Problemas de tránsito', 'Alta'),
+        ('Contaminación ambiental', 'Alta'),
+        ('Riesgo por animales peligrosos', 'Alta'),
+
+        ('Riesgo de deslizamiento', 'Crítica'),
+        ('Inundación o acumulación de agua por lluvias', 'Crítica'),
+        ('Infraestructura en riesgo', 'Crítica')
+) AS reglas(categoria, prioridad)
+JOIN prioridades p
+    ON p.nombre = reglas.prioridad
+WHERE c.nombre = reglas.categoria;
+-- =====================================================
+-- VALIDACIÓN DE PRIORIDADES DE CATEGORÍAS
+-- =====================================================
+
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM categorias
+        WHERE id_prioridad_predeterminada IS NULL
+    ) THEN
+        RAISE EXCEPTION
+            'Existen categorías sin prioridad predeterminada';
+    END IF;
+END $$;
 
 -- =====================================================
 -- ESTADOS DE INCIDENCIAS
@@ -1288,7 +1347,47 @@ VALUES
     'VINCULADO',
     'SAIU validado y vinculado con el expediente y la oficina responsable para continuar la atención de la incidencia.'
 );
+-- =========================================
+-- Permiso: observar incidencias
+-- =========================================
 
+INSERT INTO permisos (
+    nombre,
+    modulo,
+    descripcion
+)
+SELECT
+    'incidencias.observar',
+    'incidencias',
+    'Permite registrar observaciones sobre incidencias'
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM permisos
+    WHERE nombre = 'incidencias.observar'
+);
+
+-- =========================================
+-- Asignar incidencias.observar
+-- a ADMIN y OPERADOR
+-- =========================================
+
+INSERT INTO rol_permisos (
+    id_rol,
+    id_permiso
+)
+SELECT
+    r.id_rol,
+    p.id_permiso
+FROM roles r
+CROSS JOIN permisos p
+WHERE r.nombre IN ('ADMIN', 'OPERADOR')
+  AND p.nombre = 'incidencias.observar'
+  AND NOT EXISTS (
+      SELECT 1
+      FROM rol_permisos rp
+      WHERE rp.id_rol = r.id_rol
+        AND rp.id_permiso = p.id_permiso
+  );
 -- ==================================================
 -- SECTORES - BETA
 -- ==================================================
@@ -1351,3 +1450,98 @@ VALUES
 
     'Sector provisional utilizado para pruebas beta del sistema.'
 );
+
+INSERT INTO distrito_referencia (
+    ubigeo,
+    nombre,
+    descripcion,
+    geometria,
+    activo
+)
+VALUES (
+    '080106',
+    'Santiago',
+    'Distrito de Santiago, provincia del Cusco, departamento del Cusco',
+    ST_Multi(
+        ST_GeomFromText(
+            'MULTIPOLYGON EMPTY',
+            4326
+        )
+    ),
+    TRUE
+)
+ON CONFLICT (ubigeo)
+DO UPDATE SET
+    nombre = EXCLUDED.nombre,
+    descripcion = EXCLUDED.descripcion,
+    activo = EXCLUDED.activo;
+
+
+
+
+-- =========================================
+-- Permiso: editar incidencias
+-- Exclusivo del administrador
+-- =========================================
+
+INSERT INTO permisos (
+    nombre,
+    modulo,
+    descripcion
+)
+SELECT
+    'incidencias.editar',
+    'incidencias',
+    'Permite editar los datos de incidencias antes de su atención'
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM permisos
+    WHERE nombre = 'incidencias.editar'
+);
+
+-- =========================================
+-- Asignar incidencias.editar a ADMIN
+-- =========================================
+
+INSERT INTO rol_permisos (
+    id_rol,
+    id_permiso
+)
+SELECT
+    r.id_rol,
+    p.id_permiso
+FROM roles r
+CROSS JOIN permisos p
+WHERE r.nombre = 'ADMIN'
+  AND p.nombre = 'incidencias.editar'
+  AND NOT EXISTS (
+      SELECT 1
+      FROM rol_permisos rp
+      WHERE rp.id_rol = r.id_rol
+        AND rp.id_permiso = p.id_permiso
+  );
+-- =====================================================
+-- PERMISO DE CONSULTA DE ATENCIONES PARA ADMIN
+-- =====================================================
+-- Permite al administrador visualizar las atenciones.
+-- No concede permisos para iniciar, actualizar,
+-- derivar ni finalizar atenciones.
+-- =====================================================
+
+INSERT INTO rol_permisos (
+    id_rol,
+    id_permiso
+)
+SELECT
+    r.id_rol,
+    p.id_permiso
+FROM roles r
+CROSS JOIN permisos p
+WHERE r.nombre = 'ADMIN'
+  AND p.nombre = 'atenciones.ver'
+  AND NOT EXISTS (
+      SELECT 1
+      FROM rol_permisos rp
+      WHERE rp.id_rol = r.id_rol
+        AND rp.id_permiso = p.id_permiso
+  );

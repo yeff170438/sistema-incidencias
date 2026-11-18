@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 
 const router =
     express.Router();
@@ -49,7 +49,7 @@ router.get(
 
 
 // =====================================
-// BUSCAR SAIU POR CÓDIGO
+// BUSCAR SAIU POR CÃ“DIGO
 // =====================================
 
 router.get(
@@ -78,7 +78,7 @@ router.get(
 );
 
 // =====================================
-// CONFIRMAR RECEPCIÓN
+// CONFIRMAR RECEPCIÃ“N
 // =====================================
 
 router.post(
@@ -89,7 +89,7 @@ router.post(
 
 
 // =====================================
-// CORREGIR NÚMERO DE EXPEDIENTE
+// CORREGIR NÃšMERO DE EXPEDIENTE
 // =====================================
 
 // =====================================
@@ -104,5 +104,9 @@ router.patch(
 // =====================================
 // EXPORTAR
 // =====================================
-
+router.get(
+    '/:id_saiu/pdf',
+    authMiddleware,
+    controller.generateAdministrativeRequestPdf
+);
 module.exports = router;

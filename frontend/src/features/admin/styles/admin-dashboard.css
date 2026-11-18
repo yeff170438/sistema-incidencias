@@ -1,0 +1,1640 @@
+
+/* ============================================================
+   DASHBOARD ADMINISTRATIVO
+   Municipalidad Distrital de Santiago
+   Diseño: Centro de operaciones municipal
+   Compatible con AdminDashboard.tsx
+   ============================================================ */
+
+/* ============================================================
+   01. VARIABLES
+   ============================================================ */
+
+:root {
+  --dash-primary: #173f35;
+  --dash-primary-dark: #102f28;
+  --dash-primary-soft: #eaf1ed;
+
+  --dash-blue: #2476a8;
+  --dash-blue-soft: #eaf3f9;
+
+  --dash-purple: #7355a5;
+  --dash-purple-soft: #f1edf8;
+
+  --dash-green: #23845b;
+  --dash-green-soft: #e9f5ef;
+
+  --dash-orange: #d97706;
+  --dash-orange-soft: #fff3e4;
+
+  --dash-red: #b42332;
+  --dash-red-soft: #fcebed;
+
+  --dash-cyan: #168b9e;
+  --dash-cyan-soft: #e8f5f7;
+
+  --dash-yellow: #d6a321;
+  --dash-yellow-soft: #fff9e7;
+
+  --dash-bg: #f3f5f4;
+  --dash-white: #ffffff;
+  --dash-surface: #f8faf9;
+
+  --dash-text: #1b2925;
+  --dash-text-secondary: #56645e;
+  --dash-muted: #7b8983;
+
+  --dash-border: #e2e9e5;
+  --dash-border-dark: #d2ddd6;
+
+  --dash-shadow: 0 2px 9px rgba(24, 50, 39, 0.045);
+  --dash-shadow-hover: 0 7px 20px rgba(24, 50, 39, 0.085);
+
+  --dash-radius: 13px;
+  --dash-radius-small: 9px;
+
+  --dash-transition: 180ms ease;
+}
+
+/* ============================================================
+   02. CONTENEDOR PRINCIPAL
+   ============================================================ */
+
+.admin-dashboard-new {
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+  padding: 24px;
+  background: var(--dash-bg);
+  color: var(--dash-text);
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.admin-dashboard-new *,
+.admin-dashboard-new *::before,
+.admin-dashboard-new *::after {
+  box-sizing: border-box;
+}
+
+.admin-dashboard-new h1,
+.admin-dashboard-new h2,
+.admin-dashboard-new h3,
+.admin-dashboard-new p {
+  margin-top: 0;
+}
+
+.admin-dashboard-new button,
+.admin-dashboard-new select {
+  font: inherit;
+}
+
+.admin-dashboard-new button:focus-visible,
+.admin-dashboard-new select:focus-visible {
+  outline: 3px solid rgba(36, 118, 168, 0.3);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   03. CABECERA
+   ============================================================ */
+
+.admin-dashboard-new-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 22px;
+  padding: 22px 25px;
+  margin-bottom: 21px;
+  background: var(--dash-white);
+  border: 1px solid var(--dash-border);
+  border-radius: var(--dash-radius);
+  box-shadow: var(--dash-shadow);
+}
+
+.admin-dashboard-heading {
+  min-width: 0;
+}
+
+.admin-dashboard-new-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: var(--dash-primary);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+}
+
+.admin-dashboard-new-eyebrow i {
+  font-size: 13px;
+}
+
+.admin-dashboard-heading h1 {
+  margin: 0;
+  color: var(--dash-text);
+  font-size: clamp(22px, 2vw, 29px);
+  font-weight: 800;
+  letter-spacing: -0.7px;
+  line-height: 1.2;
+}
+
+.admin-dashboard-heading p {
+  margin: 7px 0 0;
+  color: var(--dash-text-secondary);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.admin-dashboard-new-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.admin-dashboard-live {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 11px;
+  color: var(--dash-primary);
+  background: var(--dash-primary-soft);
+  border: 1px solid #dce8e0;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.admin-live-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--dash-green);
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(35, 132, 91, 0.12);
+}
+
+/* ============================================================
+   04. BOTONES
+   ============================================================ */
+
+.admin-dashboard-new .admin-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 39px;
+  padding: 9px 15px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--dash-transition);
+}
+
+.admin-dashboard-new .admin-button-primary {
+  color: #ffffff;
+  background: var(--dash-primary);
+}
+
+.admin-dashboard-new .admin-button-primary:hover {
+  background: var(--dash-primary-dark);
+  transform: translateY(-1px);
+}
+
+.admin-dashboard-new .admin-button-danger {
+  color: #ffffff;
+  background: var(--dash-red);
+}
+
+.admin-dashboard-new .admin-button-danger:hover {
+  background: #941b28;
+}
+
+.admin-dashboard-new .admin-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   05. INDICADORES KPI
+   ============================================================ */
+
+.admin-dashboard-new-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 13px;
+  margin-bottom: 21px;
+}
+
+.admin-dashboard-new-kpi {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+  min-height: 116px;
+  padding: 17px 15px;
+  overflow: hidden;
+  background: var(--dash-white);
+  border: 1px solid var(--dash-border);
+  border-radius: var(--dash-radius);
+  box-shadow: var(--dash-shadow);
+  transition: transform var(--dash-transition),
+              box-shadow var(--dash-transition);
+}
+
+.admin-dashboard-new-kpi:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--dash-shadow-hover);
+}
+
+.admin-dashboard-new-kpi::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--kpi-color, var(--dash-primary));
+}
+
+.admin-dashboard-new-kpi-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 37px;
+  height: 37px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  color: var(--kpi-color);
+  background: var(--kpi-bg);
+  font-size: 16px;
+}
+
+.admin-kpi-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 5px;
+}
+
+.admin-kpi-label {
+  color: var(--dash-text-secondary);
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.admin-kpi-value {
+  color: var(--dash-text);
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.6px;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-kpi-helper {
+  color: var(--dash-muted);
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+.admin-kpi-decoration {
+  position: absolute;
+  right: 10px;
+  bottom: 5px;
+  color: var(--kpi-color);
+  opacity: 0.055;
+  font-size: 48px;
+  pointer-events: none;
+}
+
+/* Colores KPI */
+
+.admin-dashboard-new-kpi.blue,
+.admin-dashboard-new-kpi-icon.blue {
+  --kpi-color: var(--dash-blue);
+  --kpi-bg: var(--dash-blue-soft);
+}
+
+.admin-dashboard-new-kpi.purple,
+.admin-dashboard-new-kpi-icon.purple {
+  --kpi-color: var(--dash-purple);
+  --kpi-bg: var(--dash-purple-soft);
+}
+
+.admin-dashboard-new-kpi.red,
+.admin-dashboard-new-kpi-icon.red {
+  --kpi-color: var(--dash-red);
+  --kpi-bg: var(--dash-red-soft);
+}
+
+.admin-dashboard-new-kpi.green,
+.admin-dashboard-new-kpi-icon.green {
+  --kpi-color: var(--dash-green);
+  --kpi-bg: var(--dash-green-soft);
+}
+
+.admin-dashboard-new-kpi.orange,
+.admin-dashboard-new-kpi-icon.orange {
+  --kpi-color: var(--dash-orange);
+  --kpi-bg: var(--dash-orange-soft);
+}
+
+.admin-dashboard-new-kpi.cyan,
+.admin-dashboard-new-kpi-icon.cyan {
+  --kpi-color: var(--dash-cyan);
+  --kpi-bg: var(--dash-cyan-soft);
+}
+
+/* ============================================================
+   06. DISTRIBUCIÓN PRINCIPAL
+   ============================================================ */
+
+.admin-dashboard-main-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.75fr) minmax(285px, 0.85fr);
+  gap: 17px;
+  align-items: stretch;
+  margin-bottom: 19px;
+}
+
+/* ============================================================
+   07. PANELES
+   ============================================================ */
+
+.admin-panel {
+  min-width: 0;
+  background: var(--dash-white);
+  border: 1px solid var(--dash-border);
+  border-radius: var(--dash-radius);
+  box-shadow: var(--dash-shadow);
+}
+
+.admin-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-height: 75px;
+  padding: 16px 19px;
+  border-bottom: 1px solid var(--dash-border);
+}
+
+.admin-section-title {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+.admin-section-title > div {
+  min-width: 0;
+}
+
+.admin-section-title h2 {
+  margin: 0;
+  color: var(--dash-text);
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.admin-section-title p {
+  margin: 4px 0 0;
+  color: var(--dash-muted);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.admin-section-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+.admin-section-icon.blue {
+  color: var(--dash-blue);
+  background: var(--dash-blue-soft);
+}
+
+.admin-section-icon.green {
+  color: var(--dash-green);
+  background: var(--dash-green-soft);
+}
+
+.admin-section-icon.purple {
+  color: var(--dash-purple);
+  background: var(--dash-purple-soft);
+}
+
+.admin-section-icon.cyan {
+  color: var(--dash-cyan);
+  background: var(--dash-cyan-soft);
+}
+
+.admin-section-icon.orange {
+  color: var(--dash-orange);
+  background: var(--dash-orange-soft);
+}
+
+.admin-panel-counter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 6px 9px;
+  color: var(--dash-primary);
+  background: var(--dash-primary-soft);
+  border: 1px solid #e0eae3;
+  border-radius: 20px;
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.admin-panel-content {
+  padding: 19px;
+}
+
+/* ============================================================
+   08. MAPA Y FILTROS
+   ============================================================ */
+
+.admin-map-panel {
+  overflow: hidden;
+  border-top: 3px solid var(--dash-primary);
+}
+
+.admin-map-panel-header {
+  min-height: 75px;
+}
+
+.admin-map-toolbar {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 13px 19px;
+  background: #fbfcfb;
+  border-bottom: 1px solid var(--dash-border);
+}
+
+.admin-map-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 120px;
+}
+
+.admin-map-filter span {
+  color: var(--dash-muted);
+  font-size: 9px;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.admin-map-filter select {
+  width: 100%;
+  height: 34px;
+  padding: 0 28px 0 10px;
+  color: var(--dash-text-secondary);
+  background: #ffffff;
+  border: 1px solid var(--dash-border-dark);
+  border-radius: 7px;
+  font-size: 10px;
+  cursor: pointer;
+  outline: none;
+}
+
+.admin-map-filter select:focus {
+  border-color: var(--dash-blue);
+  box-shadow: 0 0 0 3px rgba(36, 118, 168, 0.09);
+}
+
+.admin-map-reset {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 34px;
+  color: var(--dash-primary);
+  background: var(--dash-primary-soft);
+  border: 1px solid transparent;
+  border-radius: 7px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: var(--dash-transition);
+}
+
+.admin-map-reset:hover {
+  background: #dce9e2;
+}
+
+.admin-map-container {
+  width: 100%;
+  min-height: 460px;
+  padding: 9px;
+  background: #edf2ef;
+}
+
+.admin-map-container > div {
+  width: 100%;
+  min-height: 440px;
+  border-radius: 9px;
+  overflow: hidden;
+}
+
+.admin-map-footer {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 11px 17px;
+  color: var(--dash-muted);
+  background: #fbfcfb;
+  border-top: 1px solid var(--dash-border);
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.admin-map-footer i {
+  color: var(--dash-blue);
+  font-size: 12px;
+}
+
+/* ============================================================
+   09. CONTROL OPERATIVO
+   ============================================================ */
+
+.admin-supervision-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-top: 3px solid var(--dash-blue);
+}
+
+.admin-supervision-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 12px;
+  padding: 17px;
+}
+
+/* Casos críticos */
+
+.admin-supervision-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  background: var(--dash-red-soft);
+  border: 1px solid #f3d7da;
+  border-radius: 10px;
+}
+
+.admin-supervision-alert-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  color: var(--dash-red);
+  background: #ffffff;
+  border-radius: 9px;
+  font-size: 16px;
+}
+
+.admin-supervision-alert > div:last-child {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 3px;
+}
+
+.admin-supervision-alert span {
+  color: #8e2932;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.admin-supervision-alert strong {
+  color: var(--dash-red);
+  font-size: 25px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.admin-supervision-alert small {
+  color: #92565c;
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+/* Estadísticas */
+
+.admin-supervision-stat {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 61px;
+  padding: 10px 12px;
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
+  border-radius: 9px;
+}
+
+.admin-supervision-stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  font-size: 14px;
+}
+
+.admin-supervision-stat-icon.orange {
+  color: var(--dash-orange);
+  background: var(--dash-orange-soft);
+}
+
+.admin-supervision-stat-icon.blue {
+  color: var(--dash-blue);
+  background: var(--dash-blue-soft);
+}
+
+.admin-supervision-stat > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.admin-supervision-stat span {
+  color: var(--dash-muted);
+  font-size: 10px;
+}
+
+.admin-supervision-stat strong {
+  color: var(--dash-text);
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Resolución */
+
+.admin-resolution-card {
+  padding: 15px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #173f35, #285b49);
+  border-radius: 11px;
+}
+
+.admin-resolution-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-resolution-heading > div {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.admin-resolution-heading span {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.admin-resolution-heading strong {
+  color: #ffffff;
+  font-size: 29px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.admin-resolution-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 37px;
+  height: 37px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.13);
+  border-radius: 10px;
+  font-size: 17px;
+}
+
+.admin-resolution-track {
+  width: 100%;
+  height: 7px;
+  margin-top: 13px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+}
+
+.admin-resolution-fill {
+  height: 100%;
+  background: #a8d7bd;
+  border-radius: inherit;
+  transition: width 350ms ease;
+}
+
+.admin-resolution-card p {
+  margin: 9px 0 0;
+  color: rgba(255, 255, 255, 0.73);
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+/* Información territorial */
+
+.admin-territory-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 4px 2px;
+}
+
+.admin-territory-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--dash-border);
+}
+
+.admin-territory-row:last-child {
+  border-bottom: none;
+}
+
+.admin-territory-row span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--dash-muted);
+  font-size: 10px;
+}
+
+.admin-territory-row span i {
+  color: var(--dash-primary);
+}
+
+.admin-territory-row strong {
+  color: var(--dash-text);
+  font-size: 10px;
+  font-weight: 750;
+  text-align: right;
+}
+
+/* ============================================================
+   10. ANALÍTICA
+   ============================================================ */
+
+.admin-analysis-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px;
+  margin-bottom: 19px;
+}
+
+.admin-analysis-grid > .admin-panel {
+  overflow: hidden;
+}
+
+/* ============================================================
+   11. MÉTRICAS Y BARRAS DE PROGRESO
+   ============================================================ */
+
+.admin-metric-list {
+  display: flex;
+  flex-direction: column;
+  gap: 19px;
+}
+
+.admin-metric-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.admin-metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-metric-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  color: var(--dash-text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.admin-metric-value {
+  flex-shrink: 0;
+  color: var(--dash-text);
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-metric-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  color: var(--dash-muted);
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+.admin-progress-track {
+  width: 100%;
+  height: 9px;
+  overflow: hidden;
+  background: #edf1ef;
+  border-radius: 20px;
+}
+
+.admin-progress-bar {
+  height: 100%;
+  min-width: 0;
+  border-radius: inherit;
+  transition: width 400ms ease;
+}
+
+/* Colores de barras */
+
+.admin-progress-bar.blue {
+  background: var(--dash-blue);
+}
+
+.admin-progress-bar.purple {
+  background: var(--dash-purple);
+}
+
+.admin-progress-bar.green {
+  background: var(--dash-green);
+}
+
+.admin-progress-bar.orange {
+  background: var(--dash-orange);
+}
+
+.admin-progress-bar.red {
+  background: var(--dash-red);
+}
+
+.admin-progress-bar.cyan {
+  background: var(--dash-cyan);
+}
+
+/* ============================================================
+   12. PRIORIDADES
+   ============================================================ */
+
+.admin-priority-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+
+.admin-priority-dot.red {
+  background: var(--dash-red);
+}
+
+.admin-priority-dot.orange {
+  background: var(--dash-orange);
+}
+
+.admin-priority-dot.blue {
+  background: var(--dash-blue);
+}
+
+.admin-priority-dot.green {
+  background: var(--dash-green);
+}
+
+/* ============================================================
+   13. RENDIMIENTO DE OFICINAS
+   ============================================================ */
+
+.admin-offices-panel {
+  margin-bottom: 19px;
+  overflow: hidden;
+  border-top: 3px solid var(--dash-primary);
+}
+
+.admin-office-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-office-card {
+  min-width: 0;
+  padding: 15px;
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
+  border-radius: 10px;
+  transition: border-color var(--dash-transition),
+              box-shadow var(--dash-transition);
+}
+
+.admin-office-card:hover {
+  border-color: var(--dash-border-dark);
+  box-shadow: var(--dash-shadow);
+}
+
+.admin-office-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  margin-bottom: 14px;
+}
+
+.admin-office-rank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 29px;
+  height: 29px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.admin-office-rank.blue,
+.admin-office-percentage.blue {
+  color: var(--dash-blue);
+  background: var(--dash-blue-soft);
+}
+
+.admin-office-rank.purple,
+.admin-office-percentage.purple {
+  color: var(--dash-purple);
+  background: var(--dash-purple-soft);
+}
+
+.admin-office-rank.green,
+.admin-office-percentage.green {
+  color: var(--dash-green);
+  background: var(--dash-green-soft);
+}
+
+.admin-office-rank.orange,
+.admin-office-percentage.orange {
+  color: var(--dash-orange);
+  background: var(--dash-orange-soft);
+}
+
+.admin-office-rank.cyan,
+.admin-office-percentage.cyan {
+  color: var(--dash-cyan);
+  background: var(--dash-cyan-soft);
+}
+
+.admin-office-card-title {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  gap: 4px;
+}
+
+.admin-office-card-title h3 {
+  margin: 0;
+  color: var(--dash-text);
+  font-size: 11px;
+  font-weight: 750;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.admin-office-card-title span {
+  color: var(--dash-muted);
+  font-size: 9px;
+}
+
+.admin-office-percentage {
+  flex-shrink: 0;
+  padding: 6px 8px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.admin-office-track {
+  height: 7px;
+}
+
+.admin-office-meta {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 11px;
+}
+
+.admin-office-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--dash-muted);
+  font-size: 9px;
+}
+
+.admin-office-meta i {
+  color: var(--dash-primary);
+}
+
+/* ============================================================
+   14. TENDENCIA Y ACTIVIDAD
+   ============================================================ */
+
+.admin-bottom-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 17px;
+  margin-bottom: 19px;
+}
+
+.admin-trend-panel,
+.admin-activity-panel {
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* ============================================================
+   15. GRÁFICO DE TENDENCIA
+   ============================================================ */
+
+.admin-trend-container {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 8px 4px;
+}
+
+.admin-trend-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 190px;
+  overflow: visible;
+  color: var(--dash-primary);
+}
+
+.admin-trend-gridline line {
+  stroke: #e8eeea;
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+
+.admin-trend-gridline text {
+  fill: var(--dash-muted);
+  font-family: inherit;
+  font-size: 10px;
+}
+
+.admin-trend-area {
+  fill: rgba(23, 63, 53, 0.11);
+  stroke: none;
+}
+
+.admin-trend-line {
+  stroke: var(--dash-primary);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.admin-trend-point {
+  fill: #ffffff;
+  stroke: var(--dash-primary);
+  stroke-width: 2.5;
+}
+
+.admin-trend-value {
+  fill: var(--dash-text);
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.admin-trend-label {
+  fill: var(--dash-muted);
+  font-size: 10px;
+}
+
+/* ============================================================
+   16. ACTIVIDAD RECIENTE
+   ============================================================ */
+
+.admin-activity-list {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 18px;
+}
+
+.admin-activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  min-width: 0;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--dash-border);
+}
+
+.admin-activity-item:last-child {
+  border-bottom: none;
+}
+
+.admin-activity-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 33px;
+  height: 33px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  font-size: 13px;
+}
+
+.admin-activity-color-0 {
+  color: var(--dash-blue);
+  background: var(--dash-blue-soft);
+}
+
+.admin-activity-color-1 {
+  color: var(--dash-green);
+  background: var(--dash-green-soft);
+}
+
+.admin-activity-color-2 {
+  color: var(--dash-purple);
+  background: var(--dash-purple-soft);
+}
+
+.admin-activity-color-3 {
+  color: var(--dash-orange);
+  background: var(--dash-orange-soft);
+}
+
+.admin-activity-color-4 {
+  color: var(--dash-cyan);
+  background: var(--dash-cyan-soft);
+}
+
+.admin-activity-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-activity-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.admin-activity-topline strong {
+  color: var(--dash-text);
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.admin-activity-reference {
+  color: var(--dash-blue);
+  font-size: 9px;
+  font-weight: 750;
+}
+
+.admin-activity-body p {
+  margin: 5px 0;
+  color: var(--dash-text-secondary);
+  font-size: 10px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.admin-activity-body time {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--dash-muted);
+  font-size: 9px;
+}
+
+/* ============================================================
+   17. ESTADOS VACÍOS
+   ============================================================ */
+
+.admin-empty-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 145px;
+  padding: 20px;
+  color: var(--dash-muted);
+  text-align: center;
+}
+
+.admin-empty-block i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 39px;
+  height: 39px;
+  color: var(--dash-primary);
+  background: var(--dash-primary-soft);
+  border-radius: 11px;
+  font-size: 17px;
+}
+
+.admin-empty-block span {
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+/* ============================================================
+   18. CARGA Y ERROR
+   ============================================================ */
+
+.admin-dashboard-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 330px;
+  padding: 30px;
+  background: #ffffff;
+  border: 1px solid var(--dash-border);
+  border-radius: var(--dash-radius);
+  text-align: center;
+}
+
+.admin-dashboard-loading .spinner-border {
+  width: 35px;
+  height: 35px;
+  color: var(--dash-primary);
+  border-width: 3px;
+}
+
+.admin-dashboard-loading h2 {
+  margin: 4px 0 0;
+  color: var(--dash-text);
+  font-size: 16px;
+  font-weight: 750;
+}
+
+.admin-dashboard-loading p {
+  margin: 0;
+  color: var(--dash-muted);
+  font-size: 11px;
+}
+
+.admin-dashboard-new-error {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #f0d5d8;
+  border-radius: var(--dash-radius);
+}
+
+.admin-error-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.admin-error-content > i {
+  color: var(--dash-red);
+  font-size: 22px;
+}
+
+.admin-error-content strong {
+  color: var(--dash-text);
+  font-size: 13px;
+}
+
+.admin-error-content p {
+  margin: 5px 0 0;
+  color: var(--dash-muted);
+  font-size: 11px;
+}
+
+/* ============================================================
+   19. RESPONSIVE: PANTALLAS GRANDES
+   ============================================================ */
+
+@media (max-width: 1450px) {
+  .admin-dashboard-new-kpi-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .admin-dashboard-main-grid {
+    grid-template-columns: minmax(0, 1.5fr) minmax(270px, 0.9fr);
+  }
+}
+
+/* ============================================================
+   20. RESPONSIVE: LAPTOP Y TABLET
+   ============================================================ */
+
+@media (max-width: 1150px) {
+  .admin-dashboard-new {
+    padding: 18px;
+  }
+
+  .admin-dashboard-main-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-supervision-content {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+  }
+
+  .admin-supervision-alert,
+  .admin-resolution-card,
+  .admin-territory-info {
+    grid-column: 1 / -1;
+  }
+
+  .admin-map-container {
+    min-height: 410px;
+  }
+
+  .admin-map-container > div {
+    min-height: 390px;
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-dashboard-new-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-dashboard-new-header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .admin-dashboard-new-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-analysis-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-bottom-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-office-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ============================================================
+   21. RESPONSIVE: MÓVILES
+   ============================================================ */
+
+@media (max-width: 600px) {
+  .admin-dashboard-new {
+    padding: 11px;
+  }
+
+  .admin-dashboard-new-header {
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+
+  .admin-dashboard-heading h1 {
+    font-size: 21px;
+  }
+
+  .admin-dashboard-heading p {
+    font-size: 10px;
+  }
+
+  .admin-dashboard-new-header-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-dashboard-new-header-actions > * {
+    width: 100%;
+  }
+
+  .admin-dashboard-new-kpi-grid {
+    gap: 9px;
+    margin-bottom: 14px;
+  }
+
+  .admin-dashboard-new-kpi {
+    min-height: 104px;
+    padding: 12px;
+    gap: 9px;
+  }
+
+  .admin-dashboard-new-kpi-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+  }
+
+  .admin-kpi-value {
+    font-size: 22px;
+  }
+
+  .admin-kpi-label {
+    font-size: 9px;
+  }
+
+  .admin-kpi-helper {
+    font-size: 8px;
+  }
+
+  .admin-dashboard-main-grid,
+  .admin-analysis-grid,
+  .admin-bottom-grid {
+    gap: 13px;
+    margin-bottom: 14px;
+  }
+
+  .admin-panel-header {
+    align-items: flex-start;
+    padding: 13px;
+  }
+
+  .admin-section-title {
+    gap: 8px;
+  }
+
+  .admin-section-icon {
+    width: 31px;
+    height: 31px;
+    font-size: 13px;
+  }
+
+  .admin-section-title h2 {
+    font-size: 12px;
+  }
+
+  .admin-section-title p {
+    font-size: 9px;
+  }
+
+  .admin-panel-content {
+    padding: 14px;
+  }
+
+  .admin-map-toolbar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 12px;
+  }
+
+  .admin-map-filter {
+    min-width: 0;
+  }
+
+  .admin-map-reset {
+    width: 100%;
+  }
+
+  .admin-map-container {
+    min-height: 340px;
+    padding: 6px;
+  }
+
+  .admin-map-container > div {
+    min-height: 325px;
+  }
+
+  .admin-supervision-content {
+    display: flex;
+    padding: 13px;
+  }
+
+  .admin-supervision-alert,
+  .admin-supervision-stat,
+  .admin-resolution-card,
+  .admin-territory-info {
+    width: 100%;
+  }
+
+  .admin-office-card {
+    padding: 12px;
+  }
+
+  .admin-activity-list {
+    padding: 4px 13px;
+  }
+
+  .admin-trend-container {
+    padding: 8px 4px;
+  }
+
+  .admin-trend-svg {
+    min-height: 150px;
+  }
+
+  .admin-error-content {
+    gap: 9px;
+  }
+}
+
+/* ============================================================
+   22. MÓVILES PEQUEÑOS
+   ============================================================ */
+
+@media (max-width: 380px) {
+  .admin-dashboard-new-kpi {
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .admin-dashboard-new-kpi-icon {
+    width: 27px;
+    height: 27px;
+  }
+
+  .admin-kpi-value {
+    font-size: 20px;
+  }
+
+  .admin-map-toolbar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-dashboard-new-error {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-dashboard-new-error button {
+    width: 100%;
+  }
+
+  .admin-office-meta {
+    flex-direction: column;
+  }
+}
+
+/* ============================================================
+   23. ACCESIBILIDAD
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-dashboard-new *,
+  .admin-dashboard-new *::before,
+  .admin-dashboard-new *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

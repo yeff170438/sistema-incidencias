@@ -1,0 +1,188 @@
+/* =========================================================
+   GENERIC CONTENT
+========================================================= */
+
+.page-header {
+  margin-bottom: 26px;
+}
+
+.page-title {
+  margin: 0;
+  color: #111827;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.page-description {
+  margin: 6px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* =========================================================
+   DASHBOARD GENERIC CARDS
+========================================================= */
+
+.dashboard-card {
+  height: 100%;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.dashboard-card-icon {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 18px;
+}
+
+.dashboard-card-label {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.dashboard-card-value {
+  margin-top: 4px;
+  color: #111827;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.dashboard-card-description {
+  margin-top: 4px;
+  color: #9ca3af;
+  font-size: 11px;
+}
+
+/* =========================================================
+   CONTENT CARD
+========================================================= */
+
+.content-card {
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.content-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.content-card-header h2 {
+  margin: 0;
+  color: #111827;
+  font-size: 17px;
+  font-weight: 650;
+}
+
+.content-card-header p {
+  margin: 5px 0 0;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table {
+  margin-bottom: 0;
+}
+
+.table th {
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.table td {
+  color: #374151;
+  font-size: 13px;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.status-warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-info {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+/* =========================================================
+   ACTIVITY GENERIC
+========================================================= */
+
+.activity-list {
+  padding: 8px 20px 20px;
+}
+
+.activity-item {
+  display: flex;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.activity-item:last-child {
+  border-bottom: 0;
+}
+
+.activity-icon {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+/* =========================================================
+   RESPONSIVE SHARED
+========================================================= */
+
+@media (max-width: 768px) {
+  .content-card-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

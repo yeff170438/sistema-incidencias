@@ -830,9 +830,15 @@ const finishAttentionByDerivation = async (data) => {
 
 };
 
+// =====================================
+// LISTAR TODAS LAS ATENCIONES
+// =====================================
 
+const findAll = async () => {
+    return await repository.findAll();
+};
 module.exports = {
-
+    findAll,
     startAttention,
     updateProgress,
     finishAttention,

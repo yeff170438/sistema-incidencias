@@ -273,6 +273,15 @@ const findPending = async () => {
 
 };
 
+// =====================================
+// Listar incidencias para gestión
+// =====================================
+
+const findForManagement = async () => {
+
+    return await repository.findForManagement();
+
+};
 
     // =====================================
     // APROBAR INCIDENCIA
@@ -1081,6 +1090,273 @@ const rejectIncident = async (
 };
 
 
+ // =====================================
+ // EDICIÓN ADMINISTRATIVA DE INCIDENCIA
+ // =====================================
+
+const adminEditIncident = async (data) => {
+
+    const {
+        id_incidencia,
+        id_usuario,
+        id_categoria,
+        id_sector,
+        titulo,
+        descripcion,
+        direccion_texto,
+        referencia,
+        longitud,
+        latitud
+    } = data;
+
+    // =====================================
+    // BUSCAR INCIDENCIA
+    // =====================================
+
+    const incidencia = await getIncidentOrThrow(
+        id_incidencia
+    );
+
+    // =====================================
+    // VALIDAR ESTADO ACTUAL
+    // =====================================
+
+    if (
+        !['Pendiente', 'Observada'].includes(
+            incidencia.estado
+        )
+    ) {
+        throw new Error(
+            'Solo se pueden editar incidencias pendientes u observadas'
+        );
+    }
+
+    // =====================================
+    // VERIFICAR QUE NO TENGA TICKET
+    // =====================================
+
+    const ticket =
+        await ticketsService.findByIncidencia(
+            id_incidencia
+        );
+
+    if (ticket) {
+        throw new Error(
+            'No se puede editar una incidencia que ya tiene un ticket asociado'
+        );
+    }
+
+    // =====================================
+    // VALIDAR CATEGORÍA
+    // =====================================
+
+    const categoria =
+        await repository.findCategoryById(
+            Number(id_categoria)
+        );
+
+    if (!categoria) {
+        throw new Error(
+            'La categoría no existe'
+        );
+    }
+
+    // =====================================
+    // NORMALIZAR Y VALIDAR SECTOR
+    // =====================================
+
+    const idSectorFinal =
+        id_sector === undefined ||
+        id_sector === null ||
+        id_sector === ''
+            ? null
+            : Number(id_sector);
+
+    if (idSectorFinal !== null) {
+
+        if (
+            !Number.isInteger(idSectorFinal) ||
+            idSectorFinal <= 0
+        ) {
+            throw new Error(
+                'El sector debe ser válido'
+            );
+        }
+
+        const sector =
+            await repository.findSectorById(
+                idSectorFinal
+            );
+
+        if (!sector) {
+            throw new Error(
+                'El sector no existe'
+            );
+        }
+    }
+
+    // =====================================
+    // DETERMINAR ESTADO FINAL
+    // =====================================
+
+    let id_estado_final = incidencia.id_estado;
+
+    if (incidencia.estado === 'Observada') {
+
+        const estadoPendiente =
+            await repository.findStateByName(
+                'INCIDENCIA',
+                'Pendiente'
+            );
+
+        if (!estadoPendiente) {
+            throw new Error(
+                'No existe el estado Pendiente'
+            );
+        }
+
+        id_estado_final =
+            estadoPendiente.id_estado;
+    }
+
+    // =====================================
+    // ACTUALIZAR INCIDENCIA
+    // =====================================
+
+    const actualizada =
+        await repository.updateCorrection({
+
+            id_incidencia,
+
+            id_categoria: Number(id_categoria),
+
+            id_sector: idSectorFinal,
+
+            titulo: titulo.trim(),
+
+            descripcion: descripcion.trim(),
+
+            direccion_texto:
+                direccion_texto.trim(),
+
+            referencia:
+                referencia == null
+                    ? null
+                    : referencia.trim(),
+
+            longitud: Number(longitud),
+
+            latitud: Number(latitud),
+
+            id_estado: id_estado_final
+
+        });
+
+    if (!actualizada) {
+        throw new Error(
+            'No se pudo actualizar la incidencia'
+        );
+    }
+
+    // =====================================
+    // REGISTRAR SEGUIMIENTO
+    // =====================================
+
+    await repository.createTracking({
+
+        id_incidencia:
+            incidencia.id_incidencia,
+
+        id_usuario,
+
+        id_ciudadano:
+            incidencia.id_ciudadano,
+
+        id_estado_anterior:
+            incidencia.id_estado,
+
+        id_estado_nuevo:
+            id_estado_final,
+
+        origen:
+            'USUARIO',
+
+        accion:
+            'EDICION_ADMINISTRATIVA_INCIDENCIA',
+
+        comentario:
+            'El administrador corrigió los datos de la incidencia antes de la generación del ticket.'
+
+    });
+
+    // =====================================
+    // REGISTRAR AUDITORÍA
+    // =====================================
+
+    await auditoriaService.registrarAuditoria({
+
+        id_usuario,
+
+        id_ciudadano:
+            incidencia.id_ciudadano,
+
+        accion:
+            'EDICION_ADMINISTRATIVA_INCIDENCIA',
+
+        tabla_afectada:
+            'incidencias',
+
+        registro_afectado:
+            incidencia.id_incidencia,
+
+        valores_modificados: {
+
+            antes: {
+                titulo: incidencia.titulo,
+                descripcion: incidencia.descripcion,
+                id_categoria: incidencia.id_categoria,
+                id_sector: incidencia.id_sector,
+                direccion_texto:
+                    incidencia.direccion_texto,
+                referencia: incidencia.referencia,
+                longitud: incidencia.longitud,
+                latitud: incidencia.latitud,
+                estado: incidencia.estado
+            },
+
+            despues: {
+                titulo: titulo.trim(),
+                descripcion: descripcion.trim(),
+                id_categoria: Number(id_categoria),
+                id_sector: idSectorFinal,
+                direccion_texto:
+                    direccion_texto.trim(),
+                referencia:
+                    referencia == null
+                        ? null
+                        : referencia.trim(),
+                longitud: Number(longitud),
+                latitud: Number(latitud),
+                estado:
+                    incidencia.estado === 'Observada'
+                        ? 'Pendiente'
+                        : incidencia.estado
+            }
+
+        }
+
+    });
+
+    // =====================================
+    // RETORNAR INCIDENCIA ACTUALIZADA
+    // =====================================
+
+    return await repository.findById(
+        id_incidencia
+    );
+
+};
+
 // =====================================
 // EXPORTAR SERVICIOS
 // =====================================
@@ -1095,12 +1371,16 @@ module.exports = {
 
     findPending,
 
+    findForManagement,
+
     validateIncident,
 
     observeIncident,
 
     correctIncident,
 
-    rejectIncident
+    rejectIncident,
+
+    adminEditIncident
 
 };

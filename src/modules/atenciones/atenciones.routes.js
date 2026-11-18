@@ -76,7 +76,16 @@ router.patch(
 );
 
 
+// =====================================
+// Listar todas las atenciones
+// =====================================
 
+router.get(
+    '/',
+    auth,
+    permissions('atenciones.ver'),
+    controller.findAll
+);
 // =====================================
 // Finalizar atención
 // =====================================

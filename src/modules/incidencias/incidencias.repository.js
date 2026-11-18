@@ -192,12 +192,19 @@ const findById = async (id) => {
 
             c.id_oficina_predeterminada,
 
+            c.id_prioridad_predeterminada,
+
+            p.nombre AS prioridad,
+
             e.nombre AS estado
 
         FROM incidencias i
 
         INNER JOIN categorias c
             ON i.id_categoria = c.id_categoria
+
+        LEFT JOIN prioridades p
+            ON p.id_prioridad = c.id_prioridad_predeterminada
 
         INNER JOIN catalogo_estados e
             ON i.id_estado = e.id_estado
@@ -230,17 +237,15 @@ const findCategoryById = async (id_categoria) => {
 
     const query = `
 
+
         SELECT
-
             id_categoria,
-
             nombre,
-
-            id_oficina_predeterminada
-
+            id_oficina_predeterminada,
+            id_prioridad_predeterminada
         FROM categorias
-
         WHERE id_categoria = $1;
+
 
     `;
 
@@ -745,6 +750,68 @@ const findIncidentState = async(id_incidencia)=>{
     return result.rows[0];
 
 };
+// =====================================
+// Listar todas las incidencias
+// Gestión administrativa y operativa
+// =====================================
+
+
+const findForManagement = async () => {
+    const query = `
+        SELECT
+            i.id_incidencia,
+            i.codigo_incidencia,
+            i.id_ciudadano,
+            i.id_categoria,
+            i.id_sector,
+            i.id_estado,
+            i.titulo,
+            i.descripcion,
+            i.direccion_texto,
+            i.referencia,
+            i.fecha_reporte,
+
+            ST_X(i.ubicacion) AS longitud,
+            ST_Y(i.ubicacion) AS latitud,
+
+            c.nombre AS categoria,
+            c.id_oficina_predeterminada,
+            c.id_prioridad_predeterminada,
+            p.nombre AS prioridad,
+
+            s.nombre AS sector,
+            e.nombre AS estado,
+            e.tipo_estado,
+
+            ci.nombres AS ciudadano_nombres,
+            ci.apellido_paterno,
+            ci.apellido_materno
+
+        FROM incidencias i
+
+        LEFT JOIN categorias c
+            ON c.id_categoria = i.id_categoria
+
+        LEFT JOIN prioridades p
+            ON p.id_prioridad = c.id_prioridad_predeterminada
+
+        LEFT JOIN sectores s
+            ON s.id_sector = i.id_sector
+
+        LEFT JOIN catalogo_estados e
+            ON e.id_estado = i.id_estado
+
+        LEFT JOIN ciudadanos ci
+            ON ci.id_ciudadano = i.id_ciudadano
+
+        ORDER BY
+            i.fecha_reporte DESC,
+            i.id_incidencia DESC;
+    `;
+
+    const result = await pool.query(query);
+    return result.rows;
+};
 
 // =====================================
 // EXPORTAR
@@ -763,6 +830,8 @@ module.exports = {
     findSectorById,
 
     findPending,
+    
+    findForManagement,
 
     updateStatus,
 
